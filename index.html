@@ -7,45 +7,34 @@
     <link rel="stylesheet" href="css/styles.css">
     <script src="vendor/jquery/jquery-1.9.1.js"></script>
     <script src="js/setup.js"></script>
-    <script src="js/ajax.js"></script>
-
+    <script src="js/Chat.js"></script>
+    <script>
+      // Make it global
+      var chat;
+      //same as document ready $(function(){}
+      $(function() {
+        chat = new Chat({
+           // actually needs to come from the URL
+          pollTime: 5000
+        });
+      });
+    </script>
   </head>
   <body>
 
     <div id="main">
       <h1>Chat with JSON!</h1>
-      <button>Refresh</button>
+      <div id="chat">
+      </div>
     </div>
 
     <div id="input">
-      <form id = "form">
-      Username:<input type="text" name="username" id="username"><br>
-      Message:<input type="text" name="message" id="message"><br>
-      <input type="submit" value = "submit">
+      <form id="form">
+        User: <input type="text" name="user" id="user"><br>
+        Message: <input type="text" name="message" id="message"><br>
+        <input type="submit" value = "submit">
       </form>
-      <script>
-       $(document).ready(function(){
-          $('button').on('click',function(){
-            location.reload();
-          });
-          
-          
-
-          $('#form').submit(function(){
-
-            var message= {
-              'username' : $('#username').val(),
-              'text' : $('#message').val()
-            }
-            console.log($('#username'))
-
-            console.log($('#username').val())
-            message=JSON.stringify(message);
-
-            makePosts(message);
-          });
-       });
-      </script>
     </div>
+
   </body>
 </html>
