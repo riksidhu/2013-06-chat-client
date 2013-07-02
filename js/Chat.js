@@ -1,5 +1,6 @@
+var lastdataobj
 var Chat = function(options) {
-  this.resource = 'test3335';
+  this.resource = 'test1234';
   this.username = options.username;
   this.friends=[];
 
@@ -26,11 +27,13 @@ var Chat = function(options) {
 };
 
 Chat.prototype.boldFriends = function(friend){
+  //debugger
   if (friend){
     this.friends.push(friend);
   }
   for (var i =0; i<this.friends.length;i++){
     var userandmsg='.'+this.friends[i]+"_msg";
+    console.log($(userandmsg))
     $(userandmsg).addClass("bold");
   }
 
@@ -72,17 +75,20 @@ Chat.prototype.sendMessage = function(message,username) {
 Chat.prototype.getMessages = function() {
   var that=this
   $.ajax('https://api.parse.com/1/classes/'+this.resource, {
+    type: "GET",
     contentType: 'application/json',
+    data: {
+      'limit': '30',
+      'where':'{"createdAt":{"$gte":{"__type":"Date","iso":"2011-08-21T18:02:52.249Z"}}}'},
     success: function(data){
-      if(data.results.length>10){
-        data=data.results.slice(data.results.length-10);
-      }
-      $('#chat').text('');
-      $('#chat').append(data.map(function(message) {
+      if(data.length>0){
+        $('#chat').append(data.map(function(message) {
+          console.log(data.results)
+          return "<div><span class='user'>"+message.username+"</span>" + ':' 
+                 + "<span class="+message.username+"_msg>"+message.text + "</span>"+"</div>";
 
-        return "<div><span class='user'>"+message.username+"</span>" + ':' 
-               + "<span class="+message.username+"_msg>"+message.text + "</span>"+"</div>";
       }));
+      }
       $('.user').on('click', function() {
         var answer=prompt('do you want to friend '+ $(this).text());
         if ( answer === "yes"){
