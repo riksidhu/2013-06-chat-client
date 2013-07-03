@@ -12,6 +12,7 @@ body {
     padding: 50px 60px;
     border: solid #ddd;
     border-width: 0 1px 1px 1px;
+    position: relative;
 }
 
 #main h1 {
@@ -40,4 +41,13 @@ body {
 }
 .bold{
     font-weight: bold;
+}
+
+#friends{
+    position: fixed;
+    top: 0px;
+    right: 100px;
+    width: 200px;
+    height: 400px;
+    background-color: gray;
 }

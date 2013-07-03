@@ -1,17 +1,24 @@
-var lastdataobj
-var Chat = function(options) {
-  this.resource = 'test1234';
+var startdate=new Date();
+var newDateObj = new Date(startdate.getTime() - 10*60000);
+var timestamp= JSON.stringify(newDateObj.toISOString());
+
+
+
+var Chat = function(options,room) {
+  
   this.username = options.username;
   this.friends=[];
+  this.resource = room || 'test1234'
 
   // Add listeners
-
   $('#form').on('submit', this.handleSubmit.bind(this));
   // $("#chat").click(function() {
   //     console.log('inside main');
   //     var div_id = $(this).children();
   //     console.log(div_id);
   // });
+  
+  $('.currentrm').text(this.resource)
 
 
 
@@ -26,9 +33,11 @@ var Chat = function(options) {
   this.boldFriends();
 };
 
+
 Chat.prototype.boldFriends = function(friend){
   //debugger
   if (friend){
+    $(".friendsnames").append("<p>"+friend+"</p>");
     this.friends.push(friend);
   }
   for (var i =0; i<this.friends.length;i++){
@@ -41,6 +50,7 @@ Chat.prototype.boldFriends = function(friend){
 
 Chat.prototype.handleSubmit = function(evt) {
   // Get the message text frmo the DOM, call sendmessage
+  //;
   this.sendMessage($('#message').val(),$('#user').val());
   
 
@@ -61,7 +71,7 @@ Chat.prototype.sendMessage = function(message,username) {
   $.ajax({
     type:"POST",
     contentType: "application/json",
-    url:'https://api.parse.com/1/classes/'+this.resource,
+    url:'https://api.parse.com/1/classes/'+ this.resource,
     data: JSON.stringify(data),
     error: function(jqXHR, errorText, error) {
       alert(errorText);
@@ -74,18 +84,31 @@ Chat.prototype.sendMessage = function(message,username) {
 
 Chat.prototype.getMessages = function() {
   var that=this
-  $.ajax('https://api.parse.com/1/classes/'+this.resource, {
+
+  $.ajax('https://api.parse.com/1/classes/'+ this.resource, {
     type: "GET",
     contentType: 'application/json',
     data: {
       'limit': '30',
-      'where':'{"createdAt":{"$gte":{"__type":"Date","iso":"2011-08-21T18:02:52.249Z"}}}'},
+      'where':'{"createdAt":{"$gt":{"__type":"Date","iso":'+timestamp+'}}}'},
     success: function(data){
+      data=data.results;
+      console.log(data)
+      console.log('data',data)
+      if (data.length === 0){
+        return
+      }
+      timestamp = data[data.length-1].createdAt
+      timestamp = '"'+timestamp+'"'
+      userelem=($('.message'))
+      if (userelem.length > 20){
+        userelem.slice(0,userelem.length-20).remove();
+      }
       if(data.length>0){
         $('#chat').append(data.map(function(message) {
-          console.log(data.results)
-          return "<div><span class='user'>"+message.username+"</span>" + ':' 
+          return "<div class='message'><span class='user'>"+message.username+"</span>" + ':' 
                  + "<span class="+message.username+"_msg>"+message.text + "</span>"+"</div>";
+
 
       }));
       }
@@ -100,5 +123,20 @@ Chat.prototype.getMessages = function() {
       alert('Failed to fetch messages!');
     }
   });
+
 };
+
+
+
+var AddRoom = function(room){
+  debugger
+  room = $('#rm').val();
+  chat = new Chat({
+           // actually needs to come from the URL
+          pollTime: 5000
+        },room);
+};
+
+
+
 

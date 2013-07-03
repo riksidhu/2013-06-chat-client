@@ -17,6 +17,14 @@
            // actually needs to come from the URL
           pollTime: 5000
         });
+
+    $(document).on("submit", "#roomform", function(event){
+        event.preventDefault();
+        AddRoom($('#rm').val)
+    });
+
+        //
+
       });
     </script>
   </head>
@@ -29,7 +37,14 @@
     </div>
     <div id="friends">
       <h3>Friends:</h3>
-        <div class='friendsnames'><div>
+        <div class='friendsnames'></div>
+    </div>
+    <div class="room">
+      <form id ="roomform">
+      Chat Room: <div class="currentrm"></div>
+      Create New Room: <input type="text" name="rm" id="rm"><br>
+        <input type="submit" value = "submit">
+      </form>
     </div>
     <div id="input">
       <form id="form">
